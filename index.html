@@ -3,82 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ressources Pédagogiques — Emilien Brochet</title>
+  <title>Supports de TD — Emilien Brochet</title>
   <style>
     body {
       font-family: system-ui, -apple-system, sans-serif;
       margin: 0;
-      padding: 30px 20px;
+      padding: 40px 20px;
       line-height: 1.6;
       color: #24292f;
       background-color: #f6f8fa;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 780px;
       margin: 0 auto;
       background: #ffffff;
-      padding: 30px;
-      border-radius: 10px;
+      padding: 35px;
+      border-radius: 12px;
       border: 1px solid #d0d7de;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
 
     h1 {
       margin-top: 0;
       font-size: 1.6rem;
       border-bottom: 2px solid #eaecef;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
+      color: #1a1f2c;
     }
 
     .intro {
       color: #57606a;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
-    /* Barre d'onglets */
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-      border-bottom: 2px solid #e1e4e8;
-      padding-bottom: 8px;
+    /* Grille de sélection d'accueil */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
     }
 
-    .tab-btn {
-      background: #eaeef2;
-      border: 1px solid #d0d7de;
-      padding: 10px 18px;
-      border-radius: 6px;
+    @media (max-width: 600px) {
+      .portal-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .course-card {
+      border: 2px solid #d0d7de;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
       cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #57606a;
+      background: #ffffff;
       transition: all 0.2s ease;
     }
 
-    .tab-btn:hover {
-      background: #d0d7de;
+    .course-card:hover {
+      border-color: #0969da;
+      box-shadow: 0 6px 18px rgba(9, 105, 218, 0.12);
+      transform: translateY(-2px);
     }
 
-    .tab-btn.active {
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .badge-l1 {
+      background: #ddf4ff;
+      color: #0969da;
+    }
+
+    .badge-l2 {
+      background: #dafbe1;
+      color: #1a7f37;
+    }
+
+    .course-card h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.25rem;
+    }
+
+    .course-card p {
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+      color: #57606a;
+    }
+
+    .enter-btn {
+      display: inline-block;
+      padding: 8px 16px;
       background: #0969da;
       color: #ffffff;
-      border-color: #0969da;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
     }
 
-    .tab-content {
+    /* Vues de cours (cachées au départ) */
+    .course-view {
       display: none;
     }
 
-    .tab-content.active {
-      display: block;
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      background: none;
+      border: 1px solid #d0d7de;
+      padding: 6px 12px;
+      border-radius: 6px;
+      color: #57606a;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      transition: background 0.15s ease;
     }
 
-    /* Fiche de séance / TD */
+    .back-btn:hover {
+      background: #f3f4f6;
+      color: #24292f;
+    }
+
+    /* Cartes de TD */
     .seance {
       margin-bottom: 18px;
-      padding: 16px;
+      padding: 18px;
       border: 1px solid #e1e4e8;
       border-radius: 8px;
       background: #fafbfc;
@@ -87,20 +146,20 @@
     .seance h3 {
       margin: 0 0 8px 0;
       font-size: 1.1rem;
-      color: #0969da;
+      color: #1a1f2c;
     }
 
     .seance p {
-      margin: 0 0 12px 0;
-      font-size: 0.95rem;
+      margin: 0 0 14px 0;
+      font-size: 0.9rem;
       color: #57606a;
     }
 
     .btn {
       display: inline-block;
-      padding: 6px 12px;
+      padding: 6px 14px;
       margin-right: 8px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       background: #0969da;
       color: white;
       text-decoration: none;
@@ -125,62 +184,85 @@
 <body>
 
   <div class="container">
-    <h1>Supports & Travaux Dirigés</h1>
-    <p class="intro">Espace de téléchargement des supports de cours, fiches de TD, données d'exercice et corrigés.</p>
+    
+    <!-- VUE 1 : PORTAIL DE DÉPART -->
+    <div id="home-view">
+      <h1>Espace Travaux Dirigés</h1>
+      <p class="intro">Bienvenue. Sélectionnez votre niveau pour accéder aux fiches de travaux dirigés, énoncés, scripts et jeux de données.</p>
+      
+      <div class="portal-grid">
+        <!-- Carte L1 -->
+        <div class="course-card" onclick="showCourse('l1')">
+          <span class="badge badge-l1">Licence 1</span>
+          <h2>Psychologie Cognitive</h2>
+          <p>Attention, perception, mémoire et paradigmes expérimentaux.</p>
+          <button class="enter-btn">Accéder aux TD &rarr;</button>
+        </div>
 
-    <!-- Onglets -->
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab(event, 'tab-l1')">L1 — Psychologie Cognitive</button>
-      <button class="tab-btn" onclick="switchTab(event, 'tab-l2')">L2 — Méthodologie</button>
+        <!-- Carte L2 -->
+        <div class="course-card" onclick="showCourse('l2')">
+          <span class="badge badge-l2">Licence 2</span>
+          <h2>Méthodologie Expérimentale</h2>
+          <p>Plans d'expérience, hypothèses, analyses statistiques et scripts R.</p>
+          <button class="enter-btn">Accéder aux TD &rarr;</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Contenu L1 -->
-    <div id="tab-l1" class="tab-content active">
-      
-      <!-- Exemple de TD L1 -->
+    <!-- VUE 2 : L1 COGNITIVE -->
+    <div id="view-l1" class="course-view">
+      <button class="back-btn" onclick="showHome()">&larr; Retour au choix des cours</button>
+      <h1>L1 — Psychologie Cognitive</h1>
+      <p class="intro">Ressources, sujets de TD et matériels d'expériences.</p>
+
       <div class="seance">
-        <h3>TD 1 — Introduction et paradigmes expérimentaux</h3>
-        <p>Présentation des temps de réaction et de l'effet Stroop.</p>
+        <h3>TD 1 — Introduction et temps de réaction</h3>
+        <p>Paradigme de soustraction mentale et effet Stroop.</p>
         <a href="L1_TD1_Enonce.pdf" class="btn" target="_blank" download>Énoncé (PDF)</a>
         <a href="L1_TD1_Donnees.csv" class="btn btn-secondary" target="_blank" download>Données (.csv)</a>
       </div>
 
       <div class="seance">
         <h3>TD 2 — Attention visuelle</h3>
-        <p>Paradigme de Posner et détection de cibles.</p>
+        <p>Paradigme d'indiçage spatial de Posner.</p>
         <a href="L1_TD2_Enonce.pdf" class="btn" target="_blank" download>Énoncé (PDF)</a>
       </div>
-
     </div>
 
-    <!-- Contenu L2 -->
-    <div id="tab-l2" class="tab-content">
-      
-      <!-- Exemple de TD L2 -->
+    <!-- VUE 3 : L2 MÉTHODO -->
+    <div id="view-l2" class="course-view">
+      <button class="back-btn" onclick="showHome()">&larr; Retour au choix des cours</button>
+      <h1>L2 — Méthodologie Expérimentale</h1>
+      <p class="intro">Plans factoriels, manipulation des variables et traitements statistiques.</p>
+
       <div class="seance">
-        <h3>TD 1 — Rappels statistiques et plans d'expérience</h3>
-        <p>Plans factoriels, variables indépendantes / dépendantes et hypothèses.</p>
-        <a href="L2_TD1_Fiche.pdf" class="btn" target="_blank" download>Support de TD (PDF)</a>
+        <h3>TD 1 — Plans factoriels & Opérationnalisation</h3>
+        <p>Identification des VI, VD et formulation des hypothèses opérationnelles.</p>
+        <a href="L2_TD1_Enonce.pdf" class="btn" target="_blank" download>Énoncé (PDF)</a>
       </div>
 
       <div class="seance">
-        <h3>TD 2 — Analyse de variance (ANOVA) & R</h3>
-        <p>Application pratique sur script R et jeu de données.</p>
-        <a href="L2_TD2_Sujet.pdf" class="btn" target="_blank" download>Sujet (PDF)</a>
+        <h3>TD 2 — Analyse de variance (ANOVA) & Pratique R</h3>
+        <p>Traitement des données d'un plan factoriel sous R.</p>
+        <a href="L2_TD2_Enonce.pdf" class="btn" target="_blank" download>Énoncé (PDF)</a>
         <a href="L2_TD2_Script.R" class="btn" target="_blank" download>Script R (.R)</a>
-        <a href="L2_TD2_Data.csv" class="btn btn-secondary" target="_blank" download>Dataset (.csv)</a>
+        <a href="L2_TD2_Donnees.csv" class="btn btn-secondary" target="_blank" download>Données (.csv)</a>
       </div>
-
     </div>
 
   </div>
 
   <script>
-    function switchTab(evt, tabId) {
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      evt.currentTarget.classList.add('active');
+    function showCourse(course) {
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('view-l1').style.display = (course === 'l1') ? 'block' : 'none';
+      document.getElementById('view-l2').style.display = (course === 'l2') ? 'block' : 'none';
+    }
+
+    function showHome() {
+      document.getElementById('home-view').style.display = 'block';
+      document.getElementById('view-l1').style.display = 'none';
+      document.getElementById('view-l2').style.display = 'none';
     }
   </script>
 
