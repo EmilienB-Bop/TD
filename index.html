@@ -109,6 +109,41 @@
       cursor: pointer;
     }
 
+    /* Boîte de saisie du mot de passe */
+    #auth-box {
+      display: none;
+      border: 2px dashed #0969da;
+      background: #f0f7ff;
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    #auth-box h3 {
+      margin-top: 0;
+      color: #0969da;
+    }
+
+    .code-input {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      width: 240px;
+      max-width: 80%;
+      margin-right: 8px;
+      margin-bottom: 10px;
+    }
+
+    .error-msg {
+      color: #cf222e;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      display: none;
+    }
+
     /* Vues de cours (cachées au départ) */
     .course-view {
       display: none;
@@ -134,7 +169,7 @@
       color: #24292f;
     }
 
-    /* Cartes de TD */
+    /* Fiches de TD */
     .seance {
       margin-bottom: 18px;
       padding: 18px;
@@ -185,35 +220,44 @@
 
   <div class="container">
     
-    <!-- VUE 1 : PORTAIL DE DÉPART -->
+    <!-- ACCUEIL : CHOIX DU COURS -->
     <div id="home-view">
       <h1>Espace Travaux Dirigés</h1>
-      <p class="intro">Bienvenue. Sélectionnez votre niveau pour accéder aux fiches de travaux dirigés, énoncés, scripts et jeux de données.</p>
+      <p class="intro">Sélectionnez votre niveau puis saisissez le mot de passe communiqué lors de la première séance de TD.</p>
       
       <div class="portal-grid">
         <!-- Carte L1 -->
-        <div class="course-card" onclick="showCourse('l1')">
+        <div class="course-card" onclick="promptCode('l1')">
           <span class="badge badge-l1">Licence 1</span>
           <h2>Psychologie Cognitive</h2>
           <p>Attention, perception, mémoire et paradigmes expérimentaux.</p>
-          <button class="enter-btn">Accéder aux TD &rarr;</button>
+          <button class="enter-btn">Accéder aux TD (Code requis) &rarr;</button>
         </div>
 
         <!-- Carte L2 -->
-        <div class="course-card" onclick="showCourse('l2')">
+        <div class="course-card" onclick="promptCode('l2')">
           <span class="badge badge-l2">Licence 2</span>
           <h2>Méthodologie Expérimentale</h2>
-          <p>Plans d'expérience, hypothèses, analyses statistiques et scripts R.</p>
-          <button class="enter-btn">Accéder aux TD &rarr;</button>
+          <p>Plans d'expérience, hypothèses, scripts R et analyse de données.</p>
+          <button class="enter-btn">Accéder aux TD (Code requis) &rarr;</button>
         </div>
+      </div>
+
+      <!-- Formulaire de saisie du code -->
+      <div id="auth-box">
+        <h3 id="auth-title">Accès au cours</h3>
+        <p id="auth-sub" style="font-size: 0.9rem; color: #57606a; margin-bottom: 15px;"></p>
+        <input type="password" id="code-input" class="code-input" placeholder="Entrez le mot de passe..." onkeypress="handleEnter(event)">
+        <button class="enter-btn" onclick="validateCode()">Valider</button>
+        <div id="error-msg" class="error-msg">Code incorrect. Veuillez réessayer.</div>
       </div>
     </div>
 
-    <!-- VUE 2 : L1 COGNITIVE -->
+    <!-- CONTENU L1 COGNITIVE -->
     <div id="view-l1" class="course-view">
-      <button class="back-btn" onclick="showHome()">&larr; Retour au choix des cours</button>
+      <button class="back-btn" onclick="showHome()">&larr; Changer de cours / Déconnexion</button>
       <h1>L1 — Psychologie Cognitive</h1>
-      <p class="intro">Ressources, sujets de TD et matériels d'expériences.</p>
+      <p class="intro">Ressources, énoncés de TD et fichiers d'exercices.</p>
 
       <div class="seance">
         <h3>TD 1 — Introduction et temps de réaction</h3>
@@ -229,21 +273,21 @@
       </div>
     </div>
 
-    <!-- VUE 3 : L2 MÉTHODO -->
+    <!-- CONTENU L2 MÉTHODOLOGIE -->
     <div id="view-l2" class="course-view">
-      <button class="back-btn" onclick="showHome()">&larr; Retour au choix des cours</button>
+      <button class="back-btn" onclick="showHome()">&larr; Changer de cours / Déconnexion</button>
       <h1>L2 — Méthodologie Expérimentale</h1>
-      <p class="intro">Plans factoriels, manipulation des variables et traitements statistiques.</p>
+      <p class="intro">Plans factoriels, opérationnalisation et traitements statistiques.</p>
 
       <div class="seance">
         <h3>TD 1 — Plans factoriels & Opérationnalisation</h3>
-        <p>Identification des VI, VD et formulation des hypothèses opérationnelles.</p>
+        <p>Identification des VI/VD et formulation des hypothèses opérationnelles.</p>
         <a href="L2_TD1_Enonce.pdf" class="btn" target="_blank" download>Énoncé (PDF)</a>
       </div>
 
       <div class="seance">
         <h3>TD 2 — Analyse de variance (ANOVA) & Pratique R</h3>
-        <p>Traitement des données d'un plan factoriel sous R.</p>
+        <p>Traitement des données sous R.</p>
         <a href="L2_TD2_Enonce.pdf" class="btn" target="_blank" download>Énoncé (PDF)</a>
         <a href="L2_TD2_Script.R" class="btn" target="_blank" download>Script R (.R)</a>
         <a href="L2_TD2_Donnees.csv" class="btn btn-secondary" target="_blank" download>Données (.csv)</a>
@@ -253,16 +297,67 @@
   </div>
 
   <script>
-    function showCourse(course) {
-      document.getElementById('home-view').style.display = 'none';
-      document.getElementById('view-l1').style.display = (course === 'l1') ? 'block' : 'none';
-      document.getElementById('view-l2').style.display = (course === 'l2') ? 'block' : 'none';
+    // Vos mots de passe personnalisés
+    const CODES = {
+      l1: 'psyL1TDcog',
+      l2: 'psyL2TDmetho'
+    };
+
+    let targetCourse = null;
+
+    function promptCode(course) {
+      targetCourse = course;
+      const authBox = document.getElementById('auth-box');
+      const authTitle = document.getElementById('auth-title');
+      const authSub = document.getElementById('auth-sub');
+      const input = document.getElementById('code-input');
+      const err = document.getElementById('error-msg');
+
+      err.style.display = 'none';
+      input.value = '';
+      authBox.style.display = 'block';
+
+      if (course === 'l1') {
+        authTitle.innerText = "Accès L1 — Psychologie Cognitive";
+        authSub.innerText = "Veuillez entrer le mot de passe du TD de L1 :";
+      } else {
+        authTitle.innerText = "Accès L2 — Méthodologie Expérimentale";
+        authSub.innerText = "Veuillez entrer le mot de passe du TD de L2 :";
+      }
+
+      authBox.scrollIntoView({ behavior: 'smooth' });
+      input.focus();
+    }
+
+    function validateCode() {
+      const input = document.getElementById('code-input');
+      const err = document.getElementById('error-msg');
+      const value = input.value.trim();
+
+      if (targetCourse && value === CODES[targetCourse]) {
+        // Code bon : on cache l'accueil et on affiche le cours
+        document.getElementById('home-view').style.display = 'none';
+        document.getElementById('auth-box').style.display = 'none';
+        document.getElementById('view-' + targetCourse).style.display = 'block';
+        window.scrollTo(0, 0);
+      } else {
+        err.style.display = 'block';
+        input.select();
+      }
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        validateCode();
+      }
     }
 
     function showHome() {
       document.getElementById('home-view').style.display = 'block';
+      document.getElementById('auth-box').style.display = 'none';
       document.getElementById('view-l1').style.display = 'none';
       document.getElementById('view-l2').style.display = 'none';
+      targetCourse = null;
     }
   </script>
 
